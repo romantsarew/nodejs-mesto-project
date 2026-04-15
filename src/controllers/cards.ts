@@ -73,7 +73,7 @@ export const addLike = (
   })
   .catch((err) => {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Некорректный id карточки');
+      return next(new BadRequestError('Некорректный id карточки'));
     }
 
     return next(err);
@@ -97,7 +97,7 @@ export const removeLike = (
   })
   .catch((err) => {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Некорректный id карточки');
+      return next(new BadRequestError('Некорректный id карточки'));
     }
 
     return next(err);

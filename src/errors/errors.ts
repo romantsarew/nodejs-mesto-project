@@ -1,9 +1,18 @@
+enum HttpStatus {
+  BAD_REQUEST = 400,
+  UNAUTHORIZED = 401,
+  FORBIDDEN = 403,
+  NOT_FOUND = 404,
+  CONFLICT = 409,
+  INTERNAL_SERVER_ERROR = 500,
+}
+
 export class BadRequestError extends Error {
   statusCode: number;
 
   constructor(message = 'Некорректные данные') {
     super(message);
-    this.statusCode = 400;
+    this.statusCode = HttpStatus.BAD_REQUEST;
   }
 }
 
@@ -12,7 +21,7 @@ export class UnauthorizedError extends Error {
 
   constructor(message = 'Необходима авторизация') {
     super(message);
-    this.statusCode = 401;
+    this.statusCode = HttpStatus.UNAUTHORIZED;
   }
 }
 
@@ -21,7 +30,7 @@ export class ForbiddenError extends Error {
 
   constructor(message = 'Недостаточно прав') {
     super(message);
-    this.statusCode = 403;
+    this.statusCode = HttpStatus.FORBIDDEN;
   }
 }
 
@@ -30,7 +39,7 @@ export class NotFoundError extends Error {
 
   constructor(message = 'Ресурс не найден') {
     super(message);
-    this.statusCode = 404;
+    this.statusCode = HttpStatus.NOT_FOUND;
   }
 }
 
@@ -39,6 +48,6 @@ export class ConflictError extends Error {
 
   constructor(message = 'Ресурс уже существует') {
     super(message);
-    this.statusCode = 409;
+    this.statusCode = HttpStatus.CONFLICT;
   }
 }

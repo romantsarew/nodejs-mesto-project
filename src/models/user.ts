@@ -31,12 +31,14 @@ const userSchema = new Schema<IUser, IUserModel>(
       minlength: 2,
       maxlength: 30,
       default: 'Жак-Ив Кусто',
+      required: true,
     },
     about: {
       type: String,
       minlength: 2,
       maxlength: 200,
       default: 'Исследователь',
+      required: true,
     },
     avatar: {
       type: String,
@@ -46,6 +48,7 @@ const userSchema = new Schema<IUser, IUserModel>(
         validator: (v: string) => urlRegex.test(v),
         message: 'Неправильный формат URL',
       },
+      required: true,
     },
     email: {
       type: String,
