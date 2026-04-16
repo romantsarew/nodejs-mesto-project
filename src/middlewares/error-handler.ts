@@ -1,14 +1,18 @@
 import { ErrorRequestHandler } from 'express';
 
+enum HttpStatusCode {
+  InternalServerError = 500,
+}
+
 interface AppError extends Error {
   statusCode?: number;
 }
 
 const errorHandler: ErrorRequestHandler = (err: AppError, req, res) => {
-  const { statusCode = 500, message } = err;
+  const { statusCode = HttpStatusCode.InternalServerError, message } = err;
 
   res.status(statusCode).send({
-    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+    message: statusCode === HttpStatusCode.InternalServerError ? 'На сервере произошла ошибка' : message,
   });
 };
 
