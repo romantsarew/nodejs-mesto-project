@@ -5,18 +5,18 @@ import {
   BadRequestError,
   NotFoundError,
   ForbiddenError,
+  HttpStatus,
 } from '../errors/errors';
-import { AuthRequest } from '../middlewares/auth';
 
 export const createCard = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { name, link } = req.body;
 
-  return Card.create({ name, link, owner: new Types.ObjectId(req.user._id) })
-    .then((card) => res.status(201).send({ data: card }))
+  return Card.create({ name, link, owner: new Types.ObjectId(req.user!._id) })
+    .then((card) => res.status(HttpStatus.CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Некорректные данные'));
@@ -31,7 +31,7 @@ export const getCards = (req: Request, res: Response, next: NextFunction) => Car
   .catch(next);
 
 export const deleteCard = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => Card.findById(req.params.cardId)
@@ -40,7 +40,7 @@ export const deleteCard = (
       throw new NotFoundError('Карточка не найдена');
     }
 
-    if (card.owner.toString() !== req.user._id) {
+    if (card.owner.toString() !== req.user!._id) {
       throw new ForbiddenError('Недостаточно прав для удаления карточки');
     }
 
@@ -56,12 +56,12 @@ export const deleteCard = (
   });
 
 export const addLike = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => Card.findByIdAndUpdate(
   req.params.cardId,
-  { $addToSet: { likes: req.user._id } },
+  { $addToSet: { likes: req.user!._id } },
   { new: true },
 )
   .then((card) => {
@@ -80,12 +80,12 @@ export const addLike = (
   });
 
 export const removeLike = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => Card.findByIdAndUpdate(
   req.params.cardId,
-  { $pull: { likes: req.user._id } },
+  { $pull: { likes: req.user!._id } },
   { new: true },
 )
   .then((card) => {

@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import router from "./routes";
 import { requestLogger, errorLogger } from "./middlewares/logger";
 import errorHandler from "./middlewares/error-handler";
+import { errors } from "celebrate";
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -15,6 +16,7 @@ app.use(requestLogger);
 app.use(router);
 
 app.use(errorLogger);
+app.use(errors());
 app.use(errorHandler);
 
 mongoose

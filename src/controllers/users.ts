@@ -7,8 +7,9 @@ import {
   NotFoundError,
   ConflictError,
   UnauthorizedError,
+  DatabaseErrorCode,
+  HttpStatus,
 } from '../errors/errors';
-import { AuthRequest } from '../middlewares/auth';
 
 const JWT_SECRET = 'super-strong-secret';
 
@@ -50,7 +51,7 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(201).send({
+    .then((user) => res.status(HttpStatus.CREATED).send({
       data: {
         _id: user._id,
         name: user.name,
@@ -60,7 +61,7 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
       },
     }))
     .catch((err) => {
-      if (err.code === 11000) {
+      if (err.code === DatabaseErrorCode.DUPLICATE_KEY) {
         return next(
           new ConflictError('Пользователь с таким email уже существует'),
         );
@@ -75,14 +76,14 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const updateUser = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { name, about } = req.body;
 
   return User.findByIdAndUpdate(
-    req.user._id,
+    req.user!._id,
     { name, about },
     { new: true, runValidators: true },
   )
@@ -103,14 +104,14 @@ export const updateUser = (
 };
 
 export const updateUserAvatar = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { avatar } = req.body;
 
   return User.findByIdAndUpdate(
-    req.user._id,
+    req.user!._id,
     { avatar },
     { new: true, runValidators: true },
   )
@@ -156,10 +157,10 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const getCurrentUser = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
-) => User.findById(req.user._id)
+) => User.findById(req.user!._id)
   .then((user) => {
     if (!user) {
       return next(new NotFoundError('Пользователь не найден'));
